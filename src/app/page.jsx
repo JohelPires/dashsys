@@ -2,12 +2,8 @@ import Image from 'next/image'
 import Button from '@mui/material/Button'
 import BarChartPlot from '../components/barchart'
 import LineChartPlot from '../components/linechart'
-
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-
+import Selector from '../components/selector'
+import { fetchUrl } from '@/lib/data'
 // const data = [
 //     {
 //         name: 'Page A',
@@ -54,6 +50,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 // ]
 
 export default async function Home() {
+    const dadosibge = await fetchUrl('https://servicodados.ibge.gov.br/api/v3/agregados')
+
     const url =
         'https://servicodados.ibge.gov.br/api/v3/agregados/6396/periodos/202304/variaveis/4099?localidades=N3[11,12,13,14,15,16,17,31,33,35,50,51]&classificacao=2[6794]'
 
@@ -62,33 +60,20 @@ export default async function Home() {
         .then((data) => data)
 
     const data = taxa_des[0].resultados[0].series
-    console.log(taxa_des)
+    // console.log(taxa_des)
     const title = taxa_des[0].variavel
     const estados = []
     const valores = []
     for (const value in data) {
-        console.log(data[value])
+        // console.log(data[value])
         estados.push(data[value].localidade.nome)
         valores.push(parseFloat(data[value].serie['202304']))
     }
-    console.log(estados, valores)
+    // console.log(estados, valores)
 
     return (
         <main>
-                   <Select
-          labelId="demo-simple-select-standard-label"
-          id="demo-simple-select-standard"
-          value={age}
-          onChange={handleChange}
-          label="Age"
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
+            <Selector dados={dadosibge} />
             <BarChartPlot x={estados} y={valores} title={title} />
             <LineChartPlot />
             <Button variant='contained'>Hello world</Button>
