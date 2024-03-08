@@ -3,6 +3,11 @@ import Button from '@mui/material/Button'
 import BarChartPlot from '../components/barchart'
 import LineChartPlot from '../components/linechart'
 
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+
 // const data = [
 //     {
 //         name: 'Page A',
@@ -70,6 +75,20 @@ export default async function Home() {
 
     return (
         <main>
+                   <Select
+          labelId="demo-simple-select-standard-label"
+          id="demo-simple-select-standard"
+          value={age}
+          onChange={handleChange}
+          label="Age"
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem>
+        </Select>
             <BarChartPlot x={estados} y={valores} title={title} />
             <LineChartPlot />
             <Button variant='contained'>Hello world</Button>
