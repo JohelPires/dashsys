@@ -74,9 +74,9 @@ export default async function Home() {
     return (
         <main>
             <Selector dados={dadosibge} />
-            <BarChartPlot x={estados} y={valores} title={title} />
-            <LineChartPlot />
-            <Button variant='contained'>Hello world</Button>
+            {/* <BarChartPlot x={estados} y={valores} title={title} /> */}
+            {/* <LineChartPlot /> */}
+            {/* <Button variant='contained'>Hello world</Button> */}
         </main>
     )
 }
