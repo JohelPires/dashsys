@@ -83,7 +83,15 @@ function Selector({ dados }) {
     }
 
     function generatePeriodo() {
-        // implementar
+        const anoinicio = inicio.toString().slice(0,4)
+        const triinicio = inicio.toString().slice(4,6)
+        const anofim = fim.toString().slice(0,4)
+        const trifim = fim.toString().slice(4,6)
+        
+        for (let i = anoinicio;i<=anofim;i++){
+            console.log(i)
+        }
+        console.log(anoinicio, triinicio, anofim, trifim)
     }
 
     async function handleChange3(e) {
