@@ -26,7 +26,18 @@ function Selector({ dados }) {
     const [variaveis, setVariaveis] = React.useState()
     const [variavelNome, setVariavelNome] = React.useState()
     const [urlAgg, setUrlAgg] = React.useState()
+    const [agg, setAgg] = React.useState()
+    const [periodos, setPeriodos] = React.useState('-12')
+    const [variavel, setVariavel] = React.useState('')
+    const [localidade, setLocalidade] = React.useState('?localidades=N2[1,2,3,4,5]')
+    const [inicio, setInicio] = React.useState('')
+    const [fim, setFim] = React.useState('')
+    const [frequencia, setFrequencia] = React.useState('')
+    
     const [urlFinal, setUrlFinal] = React.useState()
+    
+
+
 
     const [xLabels, setXlabels] = React.useState(x_Labels)
 
@@ -57,17 +68,32 @@ function Selector({ dados }) {
         // console.log(result)
         const url = `https://servicodados.ibge.gov.br/api/v3/agregados/${result[0].id}/metadados`
         setUrlAgg(`https://servicodados.ibge.gov.br/api/v3/agregados/${result[0].id}`)
+        setAgg(result[0].id)
         // console.log(url)
         const metadados = await fetchUrl(url)
-        console.log(metadados)
+        console.log(metadados.periodicidade)
+        setInicio(metadados.periodicidade.inicio)
+        setFim(metadados.periodicidade.fim)
+        setFrequencia(metadados.periodicidade.frequencia)
+        console.log(inicio, fim, frequencia)
+
+        generatePeriodo()
+
         setVariaveis(metadados.variaveis)
     }
 
-    function handleChange3(e) {
+    function generatePeriodo() {
+        // implementar
+    }
+
+    async function handleChange3(e) {
         setVariavelNome(e.target.value)
         const result = variaveis.filter((item) => item.nome == e.target.value)
         //servicodados.ibge.gov.br/api/v3/agregados/4099/periodos/-6/variaveis/4099
-        setUrlFinal(`${urlAgg}/periodos/-12/variaveis/${result[0].id}?localidades=N2[1,2,3,4,5]`)
+        // setUrlFinal(`${urlAgg}/periodos/-12/variaveis/${result[0].id}?localidades=N2[1,2,3,4,5]`)
+        setVariavel(result[0].id)
+        generateUrl()
+        // await handleGraph()
         // console.log(urlFinal)
         // const finalData = await fetchUrl(urlFinal)
         // console.log(finalData)
@@ -86,7 +112,7 @@ function Selector({ dados }) {
         const xlabels = Object.keys(dt[0].serie)
 
         for (const idx in dt) {
-            console.log(dt[idx])
+            // console.log(dt[idx])
             const serie = Object.values(dt[idx].serie)
             for (const i in serie) {
                 if (serie[i] === '...') {
@@ -96,13 +122,16 @@ function Selector({ dados }) {
                 }
                 // console.log(serie[i])
             }
-            console.log(serie)
+            // console.log(serie)
             seriess.push({ data: serie, label: dt[idx].localidade.nome })
         }
         setSeries(seriess)
         setXlabels(xlabels)
 
         // console.log(finalData[0].resultados[0].series[0])
+    }
+    function generateUrl() {
+        setUrlFinal(`https://servicodados.ibge.gov.br/api/v3/agregados/${agg}/periodos/${periodos}/variaveis/${variavel}${localidade}`)
     }
 
     return (
@@ -175,6 +204,48 @@ function Selector({ dados }) {
                     })}
                 </Select>
             )}
+             {variavel && (
+                <Stack direction='row'>
+                {/* <Typography variant='h6'>Período: </Typography> */}
+                <Select
+                    size='small'
+                    placeholder='Inicio'
+                    name='inicio'
+                    className='m-3'
+                    labelId='demo-simple-select-standard-label'
+                    id='demo-simple-select-standard'
+                    value={'inicio'}
+                    onChange={handleChange3}
+                    label='inicio'
+                    >
+                    <MenuItem value='vazio'>
+                        <em>Vazio</em>
+                    </MenuItem>
+                    <MenuItem value='2012'>
+                        2012
+                    </MenuItem>
+                    
+                </Select>
+                <Select
+                    size='small'
+                    placeholder='fim'
+                    name='fim'
+                    className='m-3'
+                    labelId='demo-simple-select-standard-label'
+                    id='demo-simple-select-standard'
+                    value={variavelNome}
+                    onChange={handleChange3}
+                    label='fim'
+                    >
+                    <MenuItem value='vazio'>
+                        <em>Vazio</em>
+                    </MenuItem>
+                    <MenuItem value='2012'>
+                        2012
+                    </MenuItem>
+                </Select>
+                    </Stack>
+            )}
             <div>
                 <div className='flex flex-row ml-3'>
                     {n2.map((item, idx) => {
@@ -195,7 +266,7 @@ function Selector({ dados }) {
                 {urlFinal && <Button onClick={handleGraph}>Gerar Gráfico</Button>}
                 {urlFinal && <Button onClick={handleGraph}>Salvar CSV</Button>}
             </Stack>
-            {urlFinal && <Typography variant='body2'>{urlFinal}</Typography>}
+            {urlFinal && <Typography variant='body2'><strong>URL: </strong> {urlFinal}</Typography>}
             <LineChart height={300} series={series} xAxis={[{ scaleType: 'point', data: xLabels }]} />
         </Paper>
     )
